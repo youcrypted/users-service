@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans SYSTEM "${JWEBSOCKET_HOME}/conf/spring-beans.dtd">
+<beans>  
+	<!-- MongoDB connection -->
+	<bean id="mongodbConnection" class="com.mongodb.MongoClient" destroy-method="close">
+		<constructor-arg value="localhost"/>
+	</bean>
+	
+	<bean id="youcryptedDatabase" class="org.jwebsocket.storage.mongodb.MongoDBUtils" factory-method="getDB">
+		<constructor-arg ref="mongodbConnection"/>
+		<constructor-arg value="youcrypted"/>
+		<!-- database user/password for authentication if required
+		<constructor-arg value="user"/>
+		<constructor-arg value="pass"/>
+		-->
+	</bean>
+
+	<!-- the mongodb collection that contains the users profile -->
+	<bean id="usersCollection" factory-bean="youcryptedDatabase" factory-method="getCollection">
+		<constructor-arg value="users" />
+	</bean>
+</beans>
