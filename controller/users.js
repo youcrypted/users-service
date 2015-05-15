@@ -99,84 +99,86 @@ App.publish("users", {
 // EVENTS REGISTRATION
 // -----------------------------------------------
 
-EventBus.register(CREATE_NS, {
-	OnMessage: function (aMsg) {
-		EventBus.send({
-			ns: NS_KEYS + ".set_keys",
-			username: aMsg.username,
-			privateKey: aMsg.privateKey,
-			publicKey: aMsg.publicKey
-		}, {
-			OnSuccess: function () {
-				aMsg.reply({
-					data: DatabaseService.createUser(aMsg.username, aMsg.cn, aMsg.email)
-				});
-			},
-			OnFailure: function (aFailure) {
-				aMsg.fail(aFailure);
-			}
-		});
-	}
-});
+if (App.isWorkerNode()) {
+	EventBus.register(CREATE_NS, {
+		OnMessage: function (aMsg) {
+			EventBus.send({
+				ns: NS_KEYS + ".set_keys",
+				username: aMsg.username,
+				privateKey: aMsg.privateKey,
+				publicKey: aMsg.publicKey
+			}, {
+				OnSuccess: function () {
+					aMsg.reply({
+						data: DatabaseService.createUser(aMsg.username, aMsg.cn, aMsg.email)
+					});
+				},
+				OnFailure: function (aFailure) {
+					aMsg.fail(aFailure);
+				}
+			});
+		}
+	});
 
-EventBus.register(EDIT_NS, {
-	OnMessage: function (aMsg) {
-		EventBus.send({
-			ns: NS_KEYS + ".set_private_key",
-			username: aMsg.connectorUsername,
-			privateKey: aMsg.privateKey
-		}, {
-			OnSuccess: function () {
-				aMsg.reply({
-					data: DatabaseService.editUser(aMsg.connectorUsername, aMsg.cn, aMsg.email)
-				});
-			},
-			OnFailure: function (aFailure) {
-				aMsg.fail(aFailure);
-			}
-		});
-	}
-});
+	EventBus.register(EDIT_NS, {
+		OnMessage: function (aMsg) {
+			EventBus.send({
+				ns: NS_KEYS + ".set_private_key",
+				username: aMsg.connectorUsername,
+				privateKey: aMsg.privateKey
+			}, {
+				OnSuccess: function () {
+					aMsg.reply({
+						data: DatabaseService.editUser(aMsg.connectorUsername, aMsg.cn, aMsg.email)
+					});
+				},
+				OnFailure: function (aFailure) {
+					aMsg.fail(aFailure);
+				}
+			});
+		}
+	});
 
-EventBus.register(REMOVE_NS, {
-	OnMessage: function (aMsg) {
-		EventBus.send({
-			ns: NS_KEYS + ".remove_keys",
-			username: aMsg.connectorUsername
-		}, {
-			OnSuccess: function () {
-				aMsg.reply({
-					data: DatabaseService.removeUser(aMsg.connectorUsername)
-				});
-			},
-			OnFailure: function (aFailure) {
-				aMsg.fail(aFailure);
-			}
-		});
-	}
-});
+	EventBus.register(REMOVE_NS, {
+		OnMessage: function (aMsg) {
+			EventBus.send({
+				ns: NS_KEYS + ".remove_keys",
+				username: aMsg.connectorUsername
+			}, {
+				OnSuccess: function () {
+					aMsg.reply({
+						data: DatabaseService.removeUser(aMsg.connectorUsername)
+					});
+				},
+				OnFailure: function (aFailure) {
+					aMsg.fail(aFailure);
+				}
+			});
+		}
+	});
 
-EventBus.register(LIST_NS, {
-	OnMessage: function (aMsg) {
-		aMsg.reply({
-			data: DatabaseService.listUsers(aMsg.start, aMsg.limit)
-		});
-	}
-});
+	EventBus.register(LIST_NS, {
+		OnMessage: function (aMsg) {
+			aMsg.reply({
+				data: DatabaseService.listUsers(aMsg.start, aMsg.limit)
+			});
+		}
+	});
 
-EventBus.register(COUNT_NS, {
-	OnMessage: function (aMsg) {
-		aMsg.reply({
-			data: DatabaseService.countUsers()
-		});
-	}
-});
+	EventBus.register(COUNT_NS, {
+		OnMessage: function (aMsg) {
+			aMsg.reply({
+				data: DatabaseService.countUsers()
+			});
+		}
+	});
 
-EventBus.register(GET_NS, {
-	OnMessage: function (aMsg) {
-		aMsg.reply({
-			data: DatabaseService.getUser(aMsg.username)
-		});
-	}
-});
+	EventBus.register(GET_NS, {
+		OnMessage: function (aMsg) {
+			aMsg.reply({
+				data: DatabaseService.getUser(aMsg.username)
+			});
+		}
+	});
+}
 
